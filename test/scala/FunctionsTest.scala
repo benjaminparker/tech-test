@@ -44,9 +44,9 @@ class FunctionsTest extends WordSpec with Matchers {
   // if the car doesn't have a sunroof
   "filterVehiclesBySunroof" should {
     "Return list of vehicles filtered by given sunroof value" in {
-      assert(filterVehiclesBySunroof(vehiclesEU, "AUTO") == List(Vehicle(70, "Jeep", 1, Some("AUTO"))))
-      assert(filterVehiclesBySunroof(vehiclesEU ::: vehicleUS, "MANUAL")
-                                     == List(Vehicle(0, "Punto", 0, Some("MANUAL")), Vehicle(40, "Fiat", 3, Some("MANUAL")),
+      assert(filterVehiclesBySunroof(vehiclesEU, "AUTO").toSet == Set(Vehicle(70, "Jeep", 1, Some("AUTO"))))
+      assert(filterVehiclesBySunroof(vehiclesEU ::: vehicleUS, "MANUAL").toSet
+                                     == Set(Vehicle(0, "Punto", 0, Some("MANUAL")), Vehicle(40, "Fiat", 3, Some("MANUAL")),
                                              Vehicle(60, "Merc", 2, Some("MANUAL"))))
     }
   }
@@ -54,20 +54,20 @@ class FunctionsTest extends WordSpec with Matchers {
   // filter list of vehicles between the given speed boundaries, if the boundary is None ignore that limit
   "filterVehiclesBySpeed" should {
     "Return list of vehicles filtered with speed greater than given value" in {
-      assert(filterVehiclesBySpeed(vehiclesUK, Some(40), None) == List(Vehicle(100, "BMW", 4, None)))
-      assert(filterVehiclesBySpeed(vehicleUS ::: vehiclesUK, Some(55), None)
-                                   == List(Vehicle(60, "Merc", 2, Some("MANUAL")), Vehicle(70, "Jeep", 1, Some("AUTO"))))
-      assert(filterVehiclesBySpeed(vehiclesEU, None, None) == vehiclesEU)
-      assert(filterVehiclesBySpeed(vehiclesEU, Some(15), Some(70))
-                                   == List(Vehicle(25, "Fiat", 6, None), Vehicle(35, "Punto", 2, None)))
+      assert(filterVehiclesBySpeed(vehiclesUK, Some(40), None).toSet == Set(Vehicle(100, "BMW", 4, None)))
+      assert(filterVehiclesBySpeed(vehicleUS ::: vehiclesUK, Some(55), None).toSet
+                                   == Set(Vehicle(60, "Merc", 2, Some("MANUAL")), Vehicle(70, "Jeep", 1, Some("AUTO"))))
+      assert(filterVehiclesBySpeed(vehiclesEU, None, None).toSet == vehiclesEU.toSet)
+      assert(filterVehiclesBySpeed(vehiclesEU, Some(15), Some(70)).toSet
+                                   == Set(Vehicle(25, "Fiat", 6, None), Vehicle(35, "Punto", 2, None)))
     }
   }
 
   // return a list of the same vehicles with the model capitalised
   "generateVehiclesCapitalised" should {
     "Return list of vehicles filtered with speed greater than given value" in {
-      assert(generateVehiclesCapitalised(vehiclesEU)
-             == List(Vehicle(70, "JEEP", 1, Some("AUTO")), Vehicle(25, "FIAT", 6, None),
+      assert(generateVehiclesCapitalised(vehiclesEU).toSet
+             == Set(Vehicle(70, "JEEP", 1, Some("AUTO")), Vehicle(25, "FIAT", 6, None),
                      Vehicle(15, "JAGUAR", 3, None), Vehicle(35, "PUNTO", 2, None)))
     }
   }
@@ -92,8 +92,8 @@ class FunctionsTest extends WordSpec with Matchers {
   // there is a bad implementation of this already, can you improve?
   "totalNumberOfWheels" should {
     "Return the total number of wheels for each model in the given list of vehicles" in {
-      assert(totalNumberWheelsByModel(vehiclesEU :+ Vehicle(40, "Punto", 3, None))
-                                      == List(("Jeep", 1), ("Fiat", 6), ("Jaguar", 3), ("Punto", 5)))
+      assert(totalNumberWheelsByModel(vehiclesEU :+ Vehicle(40, "Punto", 3, None)).toSet
+                                      == Set(("Jeep", 1), ("Fiat", 6), ("Jaguar", 3), ("Punto", 5)))
     }
   }
 
@@ -109,7 +109,7 @@ class FunctionsTest extends WordSpec with Matchers {
 
   "getVehicleListModelDetails" should {
     "Return list of details for given vehicles" in {
-      assert(getVehicleListModelDetails(vehiclesEU) == List(ModelDetails(1, 0)))
+      assert(getVehicleListModelDetails(vehiclesEU).toSet == Set(ModelDetails(1, 0)))
     }
   }
 
