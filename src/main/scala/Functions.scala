@@ -18,14 +18,10 @@ object Functions extends Enumeration {
   )
 
   // given a list of numbers return the sum of them all
-  def sum(ints: List[Int]): Int = {
-    ???
-  }
+  def sum(ints: List[Int]): Int = ints.sum
 
   // given a list of numbers return only the even ones
-  def onlyEvenNumbers(ints: List[Int]): List[Int] = {
-    ???
-  }
+  def onlyEvenNumbers(ints: List[Int]): List[Int] = ints.filter(_ % 2 == 0)
 
   // generate a list of dates from the start date forward to the end of the range
   def generateListOfDates(startDate: LocalDate, range: Int): List[String] = {
