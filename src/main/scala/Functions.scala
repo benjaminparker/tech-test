@@ -11,41 +11,32 @@ object Functions extends Enumeration {
   case class ModelDetails(size: Int, doors: Int)
 
   // Do not extend, we only have details for some models
-  private final val ModelToDetails: Map[String, ModelDetails] = Map (
-    "HONDA"  ->  ModelDetails(100, 4),
-    "TOYOTA" ->  ModelDetails(80, 6),
-    "FIAT"   ->  ModelDetails(120, 2),
-    "JEEP"   ->  ModelDetails(200, 8),
-    "PUNTO"  ->  ModelDetails(1, 0)
+  private final val ModelToDetails: Map[String, ModelDetails] = Map(
+    "HONDA" -> ModelDetails(100, 4),
+    "TOYOTA" -> ModelDetails(80, 6),
+    "FIAT" -> ModelDetails(120, 2),
+    "JEEP" -> ModelDetails(200, 8),
+    "PUNTO" -> ModelDetails(1, 0)
   )
 
   def sum(ints: Seq[Int]): Int = ints.sum
 
   def evenNumbers(ints: Seq[Int]): Seq[Int] = {
     def isEven: Int => Boolean = _ % 2 == 0
-
     ints.filter(isEven)
   }
 
-  def dates(startDate: LocalDate, noOfDays: Int): Seq[String] = (0 to noOfDays) map {
-    startDate.plusDays(_).format(DateFormat)
-  }
+  def dates(startDate: LocalDate, noOfDays: Int): Seq[String] =
+    (0 to noOfDays).map(startDate.plusDays(_).format(DateFormat))
 
   def vehiclesBySunroof(inputVehicles: Seq[Vehicle], sunroofType: String): Seq[Vehicle] =
     inputVehicles.filter(_.sunroofType contains sunroofType)
 
   def vehiclesBySpeed(inputVehicles: Seq[Vehicle], min: Option[Int], max: Option[Int]): Seq[Vehicle] =
-    inputVehicles.filter { vehicle =>
-      (vehicle, min, max) match {
-        case (v, Some(mn), Some(mx)) => mn < v.speed && v.speed < mx
-        case (v, None, Some(mx)) => v.speed < mx
-        case (v, Some(mn), None) => v.speed > mn
-        case (_, None, None) => true
-      }
-    }
+    inputVehicles.filter(v => min.fold(true)(_ < v.speed) && max.fold(true)(_ > v.speed))
 
-  def vehiclesWithModelCapitalised(inputVehicles: List[Vehicle]): List[Vehicle] = inputVehicles.map { v =>
-    v.copy(model = v.model.toUpperCase)
+  def vehiclesWithModelCapitalised(inputVehicles: List[Vehicle]): List[Vehicle] = inputVehicles.map {
+    v => v.copy(model = v.model.toUpperCase)
   }
 
   //TODO Need more messages - the general approach is shown
@@ -60,11 +51,10 @@ object Functions extends Enumeration {
       .mapValues(_.map(_.numberOfWheels).sum)
       .toSeq
 
-  def modelDetailsFor(inputVehicle: Vehicle): ModelDetails = {
+  def modelDetailsFor(inputVehicle: Vehicle): ModelDetails =
     ModelToDetails.getOrElse(inputVehicle.model.toUpperCase, throw new IllegalArgumentException(s"Cannot find details for ${inputVehicle.model}"))
-  }
 
-  def modelDetailsFor(inputVehicles: Seq[Vehicle]): Seq[ModelDetails] = inputVehicles flatMap { vehicle =>
-    ModelToDetails.get(vehicle.model.toUpperCase)
+  def modelDetailsFor(inputVehicles: Seq[Vehicle]): Seq[ModelDetails] = inputVehicles.flatMap {
+    vehicle => ModelToDetails.get(vehicle.model.toUpperCase)
   }
 }
