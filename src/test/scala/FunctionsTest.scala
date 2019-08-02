@@ -33,7 +33,7 @@ class FunctionsTest extends WordSpec with Matchers {
   val vehiclesUK = List(
     Vehicle(50, "Honda", 2, Some("AUTO")),
     Vehicle(20, "Toyota", 5, Some("MANUAL")),
-    Vehicle(100, "BMW", 4, None)
+    Vehicle(100, "BMW", 4)
   )
 
   val vehicleUS = List(
@@ -45,9 +45,9 @@ class FunctionsTest extends WordSpec with Matchers {
 
   val vehiclesEU = List(
     Vehicle(70, "Jeep", 1, Some("AUTO")),
-    Vehicle(25, "Fiat", 6, None),
-    Vehicle(15, "Jaguar", 3, None),
-    Vehicle(35, "Punto", 2, None)
+    Vehicle(25, "Fiat", 6),
+    Vehicle(15, "Jaguar", 3),
+    Vehicle(35, "Punto", 2)
   )
 
   // filter list of vehicles by the given sunroof type, possible values are AUTO, MANUAL or the option is None
@@ -97,51 +97,56 @@ class FunctionsTest extends WordSpec with Matchers {
       )
     }
   }
-  //
-  //  // Certain car manufacturers have asked for a specific message to be applied for their cars
-  //  // Honda would like to display "Hello Honda driver, have a great day!" for their normal Honda drivers
-  //  // Honda would like to display "Hello super fast Honda driver, zoom zoom!" for their fast(speed > 60) Honda drivers
-  //  // Toyota would like to display "Morning Toyota fan, watch out you're going very fast!" for their fast(speed > 55) Toyota drivers
-  //  // Toyota would like to display "Toyota driver! you're driving so fast you're losing wheels!" for their fast(speed > 70) Toyota drivers
-  //  // who are losing wheels (numberOfWheels < 4)
-  //  // Fiat would like to display "If it's a nice day, don't forget to roll down your fancy sunroof" for their Fiat drivers with
-  //  // AUTO sunroofs
-  //  // For anything not specified above display a simple "Have a good day driver"
-  //  // Add in some more test cases if you can!
-  //  "personalisedMessage" should {
-  //    "Return personalised message given a vehicle" in {
-  //      personalisedMessage(Vehicle(56, "Toyota", 5, Some("MANUAL"))) shouldEqual "Morning Toyota star, watch out you're going very fast!"
-  //    }
-  //  }
-  //
-  //  // return the total number of wheels by model for the given vehicle list
-  //  // there is a bad implementation of this already, can you improve?
-  //  "totalNumberOfWheels" should {
-  //    "Return the total number of wheels for each model in the given list of vehicles" in {
-  //      totalNumberWheelsByModel(vehiclesEU :+ Vehicle(40, "Punto", 3, None)) should contain inOrderOnly(
-  //        ("Jeep", 1),
-  //        ("Fiat", 6),
-  //        ("Jaguar", 3),
-  //        ("Punto", 5)
-  //      )
-  //    }
-  //  }
-  //
-  //  "getSingleVehicleModelDetails" should {
-  //    "Return details for given model" in {
-  //      getSingleVehicleModelDetails(Vehicle(40, "Punto", 3, None)) shouldBe ModelDetails(1, 0)
-  //    }
-  //
-  //    "Throw correct exception for model not found" in {
-  //      the[Exception] thrownBy {
-  //        getSingleVehicleModelDetails(Vehicle(40, "Ferrari", 3, None))
-  //      } should have message ("Cannot find details for Ferrari")
-  //    }
-  //  }
-  //
-  //  "getVehicleListModelDetails" should {
-  //    "Return list of details for given vehicles" in {
-  //      getVehicleListModelDetails(vehiclesEU) shouldBe ModelDetails(1, 0)
-  //    }
-  //  }
+
+  // Certain car manufacturers have asked for a specific message to be applied for their cars
+  // Honda would like to display "Hello Honda driver, have a great day!" for their normal Honda drivers
+  // Honda would like to display "Hello super fast Honda driver, zoom zoom!" for their fast(speed > 60) Honda drivers
+  // Toyota would like to display "Morning Toyota fan, watch out you're going very fast!" for their fast(speed > 55) Toyota drivers
+  // Toyota would like to display "Toyota driver! you're driving so fast you're losing wheels!" for their fast(speed > 70) Toyota drivers
+  // who are losing wheels (numberOfWheels < 4)
+  // Fiat would like to display "If it's a nice day, don't forget to roll down your fancy sunroof" for their Fiat drivers with
+  // AUTO sunroofs
+  // For anything not specified above display a simple "Have a good day driver"
+  // Add in some more test cases if you can!
+
+  "personalisedMessage" should {
+    "Return personalised message given a vehicle" in {
+      personalisedMessage(Vehicle(56, "Toyota", 5, Some("MANUAL"))) shouldEqual "Morning Toyota star, watch out you're going very fast!"
+    }
+  }
+
+  // return the total number of wheels by model for the given vehicle list
+  // there is a bad implementation of this already, can you improve?
+  "totalNumberOfWheels" should {
+    "Return the total number of wheels for each model in the given list of vehicles" in {
+      totalNumberWheelsByModel(vehiclesEU :+ Vehicle(40, "Punto", 3)) should contain only(
+        ("Jeep", 1),
+        ("Fiat", 6),
+        ("Jaguar", 3),
+        ("Punto", 5)
+      )
+    }
+  }
+
+  "getSingleVehicleModelDetails" should {
+    "Return details for given model" in {
+      getSingleVehicleModelDetails(Vehicle(40, "Punto", 3)) shouldBe ModelDetails(1, 0)
+    }
+
+    "Throw correct exception for model not found" in {
+      the[IllegalArgumentException] thrownBy {
+        getSingleVehicleModelDetails(Vehicle(40, "Ferrari", 3))
+      } should have message "Cannot find details for Ferrari"
+    }
+  }
+
+  "getVehicleListModelDetails" should {
+    "Return list of details for given vehicles" in {
+      getVehicleListModelDetails(vehiclesEU) should contain only(
+        ModelDetails(1, 0),
+        ModelDetails(120, 2),
+        ModelDetails(200, 8)
+      )
+    }
+  }
 }

@@ -6,7 +6,7 @@ object Functions extends Enumeration {
   final val DateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
   // sunroofType is None if vehicle doesn't have one
-  case class Vehicle(speed: Int, model: String, numberOfWheels: Int, sunroofType: Option[String])
+  case class Vehicle(speed: Int, model: String, numberOfWheels: Int, sunroofType: Option[String] = None)
 
   case class ModelDetails(size: Int, doors: Int)
 
@@ -16,7 +16,7 @@ object Functions extends Enumeration {
     "TOYOTA" -> ModelDetails(80, 6),
     "FIAT" -> ModelDetails(120, 2),
     "JEEP" -> ModelDetails(200, 8),
-    "JEEP" -> ModelDetails(1, 0)
+    "PUNTO" -> ModelDetails(1, 0)
   )
 
   // given a list of numbers return the sum of them all
@@ -52,30 +52,22 @@ object Functions extends Enumeration {
   }
 
   // returns a string based on the values in the provided Vehicle case class
-  def personalisedMessage(vehicle: Vehicle): String = {
-    ???
+  def personalisedMessage(vehicle: Vehicle): String = vehicle match {
+    case Vehicle(speed, "Toyota", _, _) if speed > 55 => "Morning Toyota star, watch out you're going very fast!"
+    case _ => "Have a good day driver"
   }
 
   // returns a list of models and the total number of wheels for those models
   // it's a bit bad, make it better, only works for certain models?
   // mutable state? correct count?
   def totalNumberWheelsByModel(inputVehicles: List[Vehicle]): List[(String, Int)] = {
-    var toyotaCount = 0
-    var hondaCount = 0
-    for (
-      vehicle <- inputVehicles
-    ) {
-      if (vehicle.model == "TOYOTA") toyotaCount = toyotaCount + 1
-      if (vehicle.model == "HONDA") hondaCount = hondaCount + 1
-    }
-
-    List(("HONDA", hondaCount), ("TOYOTA", toyotaCount))
-  }
+    inputVehicles.groupBy(_.model).mapValues(_.map(_.numberOfWheels).sum)
+  }.toList
 
   // return a vehicle model details, or throw an Exception saying
   // "Cannot find details for $model"
-  def getSingleVehicleModelDetails(inputVehicles: Vehicle): ModelDetails = {
-    ???
+  def getSingleVehicleModelDetails(inputVehicle: Vehicle): ModelDetails = {
+    modelToDetails.getOrElse(inputVehicle.model.toUpperCase,throw new IllegalArgumentException(s"Cannot find details for ${inputVehicle.model}"))
   }
 
   // returns a list of model details given a list of vehicles,
@@ -83,6 +75,8 @@ object Functions extends Enumeration {
   // if a vehicle model is not in the list do not include it in
   // the return list
   def getVehicleListModelDetails(inputVehicles: List[Vehicle]): List[ModelDetails] = {
-    ???
+    inputVehicles flatMap { v=>
+      modelToDetails.get(v.model.toUpperCase)
+    }
   }
 }
