@@ -17,7 +17,7 @@ class FunctionsTest extends WordSpec with Matchers {
 
     "return list of even numbers given list of ints" in {
       val ints = List(1, 2, 3, 4, 5)
-      onlyEvenNumbers(ints) shouldEqual List(2, 4)
+      evenNumbers(ints) shouldEqual List(2, 4)
     }
   }
 
@@ -25,8 +25,8 @@ class FunctionsTest extends WordSpec with Matchers {
 
     "return list of dates in string format yyyy-MM-dd from start point up to and including the range" in {
       val startDate = LocalDate.of(2019, 9, 1)
-      generateListOfDates(startDate, 2) should contain only("2019-09-01", "2019-09-02", "2019-09-03")
-      generateListOfDates(startDate, 0) should contain only "2019-09-01"
+      dates(startDate, 2) should contain only("2019-09-01", "2019-09-02", "2019-09-03")
+      dates(startDate, 0) should contain only "2019-09-01"
     }
   }
 
@@ -54,9 +54,9 @@ class FunctionsTest extends WordSpec with Matchers {
   // if the car doesn't have a sunroof
   "filterVehiclesBySunroof" should {
     "Return list of vehicles filtered by given sunroof value" in {
-      filterVehiclesBySunroof(vehiclesEU, "AUTO") should contain only Vehicle(70, "Jeep", 1, Some("AUTO"))
+      vehiclesBySunroof(vehiclesEU, "AUTO") should contain only Vehicle(70, "Jeep", 1, Some("AUTO"))
 
-      filterVehiclesBySunroof(vehiclesEU ::: vehicleUS, "MANUAL") should contain only(
+      vehiclesBySunroof(vehiclesEU ::: vehicleUS, "MANUAL") should contain only(
         Vehicle(0, "Punto", 0, Some("MANUAL")),
         Vehicle(40, "Fiat", 3, Some("MANUAL")),
         Vehicle(60, "Merc", 2, Some("MANUAL"))
@@ -67,19 +67,19 @@ class FunctionsTest extends WordSpec with Matchers {
   // filter list of vehicles between the given speed boundaries, if the boundary is None ignore that limit
   "filterVehiclesBySpeed" should {
     "Return list of vehicles filtered with speed greater than given value" in {
-      filterVehiclesBySpeed(vehiclesUK, Some(40), None) shouldEqual List(
+      vehiclesBySpeed(vehiclesUK, Some(40), None) shouldEqual List(
         Vehicle(50, "Honda", 2, Some("AUTO")),
         Vehicle(100, "BMW", 4, None)
       )
 
-      filterVehiclesBySpeed(vehicleUS ::: vehiclesUK, Some(55), None) shouldEqual List(
+      vehiclesBySpeed(vehicleUS ::: vehiclesUK, Some(55), None) shouldEqual List(
         Vehicle(60, "Merc", 2, Some("MANUAL")),
         Vehicle(100, "BMW", 4, None)
       )
 
-      filterVehiclesBySpeed(vehiclesEU, None, None) shouldEqual vehiclesEU
+      vehiclesBySpeed(vehiclesEU, None, None) shouldEqual vehiclesEU
 
-      filterVehiclesBySpeed(vehiclesEU, Some(15), Some(70)) shouldEqual List(
+      vehiclesBySpeed(vehiclesEU, Some(15), Some(70)) shouldEqual List(
         Vehicle(25, "Fiat", 6, None),
         Vehicle(35, "Punto", 2, None)
       )
@@ -89,7 +89,7 @@ class FunctionsTest extends WordSpec with Matchers {
   // return a list of the same vehicles with the model capitalised
   "generateVehiclesCapitalised" should {
     "Return list of vehicles filtered with speed greater than given value" in {
-      generateVehiclesCapitalised(vehiclesEU) shouldEqual List(
+      vehiclesWithModelCapitalised(vehiclesEU) shouldEqual List(
         Vehicle(70, "JEEP", 1, Some("AUTO")),
         Vehicle(25, "FIAT", 6, None),
         Vehicle(15, "JAGUAR", 3, None),
@@ -111,7 +111,7 @@ class FunctionsTest extends WordSpec with Matchers {
 
   "personalisedMessage" should {
     "Return personalised message given a vehicle" in {
-      personalisedMessage(Vehicle(56, "Toyota", 5, Some("MANUAL"))) shouldEqual "Morning Toyota star, watch out you're going very fast!"
+      personalisedMessageFor(Vehicle(56, "Toyota", 5, Some("MANUAL"))) shouldEqual "Morning Toyota star, watch out you're going very fast!"
     }
   }
 
@@ -128,21 +128,21 @@ class FunctionsTest extends WordSpec with Matchers {
     }
   }
 
-  "getSingleVehicleModelDetails" should {
+  "modelDetailsFor" should {
     "Return details for given model" in {
-      getSingleVehicleModelDetails(Vehicle(40, "Punto", 3)) shouldBe ModelDetails(1, 0)
+      modelDetailsFor(Vehicle(40, "Punto", 3)) shouldBe ModelDetails(1, 0)
     }
 
     "Throw correct exception for model not found" in {
       the[IllegalArgumentException] thrownBy {
-        getSingleVehicleModelDetails(Vehicle(40, "Ferrari", 3))
+        modelDetailsFor(Vehicle(40, "Ferrari", 3))
       } should have message "Cannot find details for Ferrari"
     }
   }
 
-  "getVehicleListModelDetails" should {
+  "modelDetailsFor" should {
     "Return list of details for given vehicles" in {
-      getVehicleListModelDetails(vehiclesEU) should contain only(
+      modelDetailsFor(vehiclesEU) should contain only(
         ModelDetails(1, 0),
         ModelDetails(120, 2),
         ModelDetails(200, 8)
