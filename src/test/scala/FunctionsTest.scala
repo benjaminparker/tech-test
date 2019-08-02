@@ -13,7 +13,7 @@ class FunctionsTest extends WordSpec with Matchers {
     }
   }
 
-  "onlyEvenNumbers" should {
+  "evenNumbers" should {
 
     "return list of even numbers given list of ints" in {
       val ints = List(1, 2, 3, 4, 5)
@@ -21,7 +21,7 @@ class FunctionsTest extends WordSpec with Matchers {
     }
   }
 
-  "generateListOfDates" should {
+  "dates" should {
 
     "return list of dates in string format yyyy-MM-dd from start point up to and including the range" in {
       val startDate = LocalDate.of(2019, 9, 1)
@@ -52,7 +52,8 @@ class FunctionsTest extends WordSpec with Matchers {
 
   // filter list of vehicles by the given sunroof type, possible values are AUTO, MANUAL or the option is None
   // if the car doesn't have a sunroof
-  "filterVehiclesBySunroof" should {
+  "vehiclesBySunroof" should {
+
     "Return list of vehicles filtered by given sunroof value" in {
       vehiclesBySunroof(vehiclesEU, "AUTO") should contain only Vehicle(70, "Jeep", 1, Some("AUTO"))
 
@@ -65,7 +66,8 @@ class FunctionsTest extends WordSpec with Matchers {
   }
 
   // filter list of vehicles between the given speed boundaries, if the boundary is None ignore that limit
-  "filterVehiclesBySpeed" should {
+  "vehiclesBySpeed" should {
+
     "Return list of vehicles filtered with speed greater than given value" in {
       vehiclesBySpeed(vehiclesUK, Some(40), None) shouldEqual List(
         Vehicle(50, "Honda", 2, Some("AUTO")),
@@ -87,8 +89,9 @@ class FunctionsTest extends WordSpec with Matchers {
   }
 
   // return a list of the same vehicles with the model capitalised
-  "generateVehiclesCapitalised" should {
-    "Return list of vehicles filtered with speed greater than given value" in {
+  "vehiclesWithModelCapitalised" should {
+
+    "return list of vehicles with their model capitalized" in {
       vehiclesWithModelCapitalised(vehiclesEU) shouldEqual List(
         Vehicle(70, "JEEP", 1, Some("AUTO")),
         Vehicle(25, "FIAT", 6, None),
@@ -107,17 +110,37 @@ class FunctionsTest extends WordSpec with Matchers {
   // Fiat would like to display "If it's a nice day, don't forget to roll down your fancy sunroof" for their Fiat drivers with
   // AUTO sunroofs
   // For anything not specified above display a simple "Have a good day driver"
-  // Add in some more test cases if you can!
-
   "personalisedMessage" should {
-    "Return personalised message given a vehicle" in {
+
+    "Return personalised message for standard Honda" in {
+      personalisedMessageFor(Vehicle(60, "Honda", 5, Some("MANUAL"))) shouldEqual "Hello Honda driver, have a great day!"
+    }
+
+    "Return personalised message for fast Honda" in {
+      personalisedMessageFor(Vehicle(61, "Honda", 5, Some("AUTO"))) shouldEqual "Hello super fast Honda driver, zoom zoom!"
+    }
+
+    "Return personalised message for fast Toyota" in {
       personalisedMessageFor(Vehicle(56, "Toyota", 5, Some("MANUAL"))) shouldEqual "Morning Toyota star, watch out you're going very fast!"
+    }
+
+    "Return personalised message for super-fast Toyota with less than 4 wheels" in {
+      personalisedMessageFor(Vehicle(71, "Toyota", 3, Some("MANUAL"))) shouldEqual "Toyota driver! you're driving so fast you're losing wheels!"
+    }
+
+    "Return personalised message for fast Fiat with auto sunroof" in {
+      personalisedMessageFor(Vehicle(71, "Fiat", 3, Some("AUTO"))) shouldEqual "If it's a nice day, don't forget to roll down your fancy sunroof"
+    }
+
+    "Return standard message for others" in {
+      personalisedMessageFor(Vehicle(45, "Jaguar", 4, Some("MANUAL"))) shouldEqual "Have a good day driver"
     }
   }
 
   // return the total number of wheels by model for the given vehicle list
   // there is a bad implementation of this already, can you improve?
-  "totalNumberOfWheels" should {
+  "totalNumberWheelsByModel" should {
+
     "Return the total number of wheels for each model in the given list of vehicles" in {
       totalNumberWheelsByModel(vehiclesEU :+ Vehicle(40, "Punto", 3)) should contain only(
         ("Jeep", 1),
@@ -129,11 +152,12 @@ class FunctionsTest extends WordSpec with Matchers {
   }
 
   "modelDetailsFor" should {
+
     "Return details for given model" in {
       modelDetailsFor(Vehicle(40, "Punto", 3)) shouldBe ModelDetails(1, 0)
     }
 
-    "Throw correct exception for model not found" in {
+    "Throw IllegalArgumentException for model not found" in {
       the[IllegalArgumentException] thrownBy {
         modelDetailsFor(Vehicle(40, "Ferrari", 3))
       } should have message "Cannot find details for Ferrari"
@@ -141,7 +165,8 @@ class FunctionsTest extends WordSpec with Matchers {
   }
 
   "modelDetailsFor" should {
-    "Return list of details for given vehicles" in {
+
+    "Return list of model details for given vehicles" in {
       modelDetailsFor(vehiclesEU) should contain only(
         ModelDetails(1, 0),
         ModelDetails(120, 2),

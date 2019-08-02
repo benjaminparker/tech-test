@@ -39,9 +39,12 @@ object Functions extends Enumeration {
     v => v.copy(model = v.model.toUpperCase)
   }
 
-  //TODO Need more messages - the general approach is shown
-  def personalisedMessageFor(vehicle: Vehicle): String = vehicle match {
-    case Vehicle(speed, model, _, _) if model.toUpperCase == "TOYOTA" && speed > 55 => "Morning Toyota star, watch out you're going very fast!"
+  def personalisedMessageFor(vehicle: Vehicle): String = vehicle.copy(model = vehicle.model.toUpperCase) match {
+    case Vehicle(speed, "HONDA", _, _) if speed > 60 => "Hello super fast Honda driver, zoom zoom!"
+    case Vehicle(_, "HONDA", _, _)  => "Hello Honda driver, have a great day!"
+    case Vehicle(speed, "TOYOTA", wheels, _) if speed > 70 && wheels < 4 => "Toyota driver! you're driving so fast you're losing wheels!"
+    case Vehicle(speed, "TOYOTA", _, _) if speed > 55 => "Morning Toyota star, watch out you're going very fast!"
+    case Vehicle(_, "FIAT", _, Some("AUTO")) => "If it's a nice day, don't forget to roll down your fancy sunroof"
     case _ => "Have a good day driver"
   }
 
