@@ -27,26 +27,19 @@ object Functions extends Enumeration {
     ints.filter(isEven)
   }
 
-  def dates(startDate: LocalDate, noOfDays: Int): Seq[String] = (0 to noOfDays) map {
-    startDate.plusDays(_).format(DateFormat)
-  }
+  def dates(startDate: LocalDate, noOfDays: Int): Seq[String] = 
+    (0 to noOfDays).map(startDate.plusDays(_).format(DateFormat))
+  
 
   def vehiclesBySunroof(inputVehicles: Seq[Vehicle], sunroofType: String): Seq[Vehicle] =
     inputVehicles.filter(_.sunroofType contains sunroofType)
 
   def vehiclesBySpeed(inputVehicles: Seq[Vehicle], min: Option[Int], max: Option[Int]): Seq[Vehicle] =
-    inputVehicles.filter { vehicle =>
-      (vehicle, min, max) match {
-        case (v, Some(mn), Some(mx)) => mn < v.speed && v.speed < mx
-        case (v, None, Some(mx)) => v.speed < mx
-        case (v, Some(mn), None) => v.speed > mn
-        case (_, None, None) => true
-      }
-    }
+    inputVehicles.filter ( v => min.fold(true)(_ < v.speed) && max.fold(true)(_ > v.speed))
+   
 
-  def vehiclesWithModelCapitalised(inputVehicles: List[Vehicle]): List[Vehicle] = inputVehicles.map { v =>
-    v.copy(model = v.model.toUpperCase)
-  }
+  def vehiclesWithModelCapitalised(inputVehicles: List[Vehicle]): List[Vehicle] =
+    inputVehicles.map(v =>v.copy(model = v.model.toUpperCase)
 
   //TODO Need more messages - the general approach is shown
   def personalisedMessageFor(vehicle: Vehicle): String = vehicle match {
@@ -60,11 +53,8 @@ object Functions extends Enumeration {
       .mapValues(_.map(_.numberOfWheels).sum)
       .toSeq
 
-  def modelDetailsFor(inputVehicle: Vehicle): ModelDetails = {
+  def modelDetailsFor(inputVehicle: Vehicle): ModelDetails =
     ModelToDetails.getOrElse(inputVehicle.model.toUpperCase, throw new IllegalArgumentException(s"Cannot find details for ${inputVehicle.model}"))
-  }
 
-  def modelDetailsFor(inputVehicles: Seq[Vehicle]): Seq[ModelDetails] = inputVehicles flatMap { vehicle =>
-    ModelToDetails.get(vehicle.model.toUpperCase)
-  }
-}
+  def modelDetailsFor(inputVehicles: Seq[Vehicle]): Seq[ModelDetails] = 
+    inputVehicles.flatMap(vehicle => ModelToDetails.get(vehicle.model.toUpperCase)
