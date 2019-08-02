@@ -1,7 +1,9 @@
 import java.time.LocalDate
-import scala.util.{Try, Success, Failure}
+import java.time.format.DateTimeFormatter
 
 object Functions extends Enumeration {
+
+  final val DateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
   // sunroofType is None if vehicle doesn't have one
   case class Vehicle(speed: Int, model: String, numberOfWheels: Int, sunroofType: Option[String])
@@ -24,23 +26,29 @@ object Functions extends Enumeration {
   def onlyEvenNumbers(ints: List[Int]): List[Int] = ints.filter(_ % 2 == 0)
 
   // generate a list of dates from the start date forward to the end of the range
-  def generateListOfDates(startDate: LocalDate, range: Int): List[String] = {
-    ???
+  def generateListOfDates(startDate: LocalDate, range: Int): Seq[String] = (0 to range) map {
+    startDate.plusDays(_).format(DateFormat)
   }
 
   // filter a list of vehicles by the given sunroofType
   def filterVehiclesBySunroof(inputVehicles: List[Vehicle], sunroofType: String): List[Vehicle] = {
-    ???
+    inputVehicles.filter(_.sunroofType contains sunroofType)
   }
 
-  // filter a list of vehicles by the given boundries, if boundary not given ignore
-  def filterVehiclesBySpeed(inputVehicles: List[Vehicle], higherThan: Option[Int], lowerThan: Option[Int]): List[Vehicle] = {
-    ???
-  }
+  // filter a list of vehicles by the given boundaries, if boundary not given ignore
+  def filterVehiclesBySpeed(inputVehicles: List[Vehicle], min: Option[Int], max: Option[Int]): List[Vehicle] =
+    inputVehicles.filter { vehicle =>
+      (vehicle, min, max) match {
+        case (v, Some(mn), Some(mx)) => mn < v.speed && v.speed < mx
+        case (v, None, Some(mx)) => v.speed < mx
+        case (v, Some(mn), None) => v.speed > mn
+        case (_, None, None) => true
+      }
+    }
 
   // generate list of vehicles with model capitalised
-  def generateVehiclesCapitalised(inputVehicles: List[Vehicle]): List[Vehicle] = {
-    ???
+  def generateVehiclesCapitalised(inputVehicles: List[Vehicle]): List[Vehicle] = inputVehicles.map { v =>
+    v.copy(model = v.model.toUpperCase)
   }
 
   // returns a string based on the values in the provided Vehicle case class
